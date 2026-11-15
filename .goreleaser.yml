@@ -1,0 +1,15 @@
+version: 2
+builds:
+  - binary: tndt
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
+changelog:
+  disable: true
