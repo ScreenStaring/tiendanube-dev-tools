@@ -13,3 +13,16 @@ snapshot:
 
 changelog:
   disable: true
+
+brews:
+  - name: tiendanube-dev-tools
+    homepage: "https://github.com/ScreenStaring/tiendanube-dev-tools"
+    description: "Command-line program to assist with the development and maintenance of Tiendanube and Nuvemshop apps and stores"
+    license: "MIT"
+    repository:
+      owner: ScreenStaring
+      name: homebrew-tap
+    directory: Formula
+    commit_author:
+      name: screenstaring-bot
+      email: 224665351+screenstaring-bot@users.noreply.github.com
