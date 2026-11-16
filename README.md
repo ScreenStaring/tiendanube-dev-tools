@@ -2,6 +2,18 @@
 
 Command-line program to assist with the development and maintenance of Tiendanube and Nuvemshop apps and stores.
 
+## Installation
+
+Download the version for your platform on the [releases page](https://github.com/ScreenStaring/tiendanube-dev-tools/releases).
+Windows, macOS/OS X, and GNU/Linux are supported.
+
+### Using [Homebrew](https://brew.sh/)
+
+```
+brew tap screenstaring/tap
+brew install tiendanube-dev-tools
+```
+
 ## Usage
 
 The CLI interface uses the executable `tndt`:
@@ -464,6 +476,7 @@ Note: Integration tests create and delete real resources on the configured store
 
 ## See Also
 
+- [tiendanube_url](https://github.com/ScreenStaring/tiendanube_url/) - Ruby gem to Build URLs to Tiendanube and Nuvemshop web pages
 - [Shopify Dev Tools](https://github.com/ScreenStaring/shopify-dev-tools/) - Command-line program to assist with the development and/or maintenance of Shopify apps and stores
 
 ## License
