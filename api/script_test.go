@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"strings"
 	"testing"
 )
 
@@ -101,6 +102,45 @@ func TestScriptHelpers(t *testing.T) {
 	}
 	if s2.GetSrc() != "https://example.com/draft.js" {
 		t.Errorf("GetSrc() = %q, want draft.js", s2.GetSrc())
+	}
+}
+
+func TestCreateScriptValidation(t *testing.T) {
+	client := NewClient("123", "token")
+
+	_, err := client.CreateScript(context.Background(), nil)
+	if err == nil || !strings.Contains(err.Error(), "cannot be nil") {
+		t.Errorf("expected nil request error, got %v", err)
+	}
+
+	_, err = client.CreateScript(context.Background(), &CreateScriptRequest{
+		ScriptID: 0,
+	})
+	if err == nil || !strings.Contains(err.Error(), "script_id is required") {
+		t.Errorf("expected script_id required error, got %v", err)
+	}
+}
+
+func TestUpdateScriptValidation(t *testing.T) {
+	client := NewClient("123", "token")
+
+	_, err := client.UpdateScript(context.Background(), 123, nil)
+	if err == nil || !strings.Contains(err.Error(), "cannot be nil") {
+		t.Errorf("expected nil request error, got %v", err)
+	}
+
+	_, err = client.UpdateScript(context.Background(), 0, &UpdateScriptRequest{})
+	if err == nil || !strings.Contains(err.Error(), "script id is required") {
+		t.Errorf("expected script id required error, got %v", err)
+	}
+}
+
+func TestDeleteScriptValidation(t *testing.T) {
+	client := NewClient("123", "token")
+
+	err := client.DeleteScript(context.Background(), 0)
+	if err == nil || !strings.Contains(err.Error(), "script id is required") {
+		t.Errorf("expected script id required error, got %v", err)
 	}
 }
 

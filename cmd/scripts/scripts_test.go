@@ -123,6 +123,141 @@ func TestPrintJSONL(t *testing.T) {
 	}
 }
 
+func TestParseQueryParams(t *testing.T) {
+	tests := []struct {
+		name    string
+		args    []string
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "empty args",
+			args: nil,
+			want: "",
+		},
+		{
+			name: "single key-val",
+			args: []string{"key1=val1"},
+			want: `{"key1":"val1"}`,
+		},
+		{
+			name: "multiple flags",
+			args: []string{"key1=val1", "key2=val2"},
+			want: `{"key1":"val1","key2":"val2"}`,
+		},
+		{
+			name: "values with comma",
+			args: []string{"key1=val1,val2", "key2=val3"},
+			want: `{"key1":"val1,val2","key2":"val3"}`,
+		},
+		{
+			name: "multiple flags with various values",
+			args: []string{"paramA=2", "showDialog=true", "disabled=false"},
+			want: `{"disabled":"false","paramA":"2","showDialog":"true"}`,
+		},
+		{
+			name:    "invalid no equal sign",
+			args:    []string{"invalid_no_equal"},
+			wantErr: true,
+		},
+		{
+			name:    "invalid empty key",
+			args:    []string{"=val"},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parseQueryParams(tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("parseQueryParams() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !tt.wantErr && got != tt.want {
+				t.Errorf("parseQueryParams() = %s, want %s", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestScriptsCreateArgsValidation(t *testing.T) {
+	app := setupTestApp()
+
+	// Missing script id
+	err := app.Run(context.Background(), []string{"tndt", "scripts", "create", "--store", "123", "--access-token", "token"})
+	if err == nil || !strings.Contains(err.Error(), "Script id is required") {
+		t.Errorf("expected 'Script id is required', got: %v", err)
+	}
+
+	// Too many arguments
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "create", "--store", "123", "--access-token", "token", "123", "456"})
+	if err == nil || !strings.Contains(err.Error(), "Too many arguments") {
+		t.Errorf("expected 'Too many arguments', got: %v", err)
+	}
+
+	// Non-numeric script id
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "create", "--store", "123", "--access-token", "token", "abc"})
+	if err == nil || !strings.Contains(err.Error(), "invalid: must be an int") {
+		t.Errorf("expected 'must be an int', got: %v", err)
+	}
+
+	// Invalid query format
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "create", "--store", "123", "--access-token", "token", "-q", "invalid_no_equal", "123"})
+	if err == nil || !strings.Contains(err.Error(), "key=value") {
+		t.Errorf("expected 'key=value' error, got: %v", err)
+	}
+}
+
+func TestScriptsUpdateArgsValidation(t *testing.T) {
+	app := setupTestApp()
+
+	// Missing script id
+	err := app.Run(context.Background(), []string{"tndt", "scripts", "update", "--store", "123", "--access-token", "token"})
+	if err == nil || !strings.Contains(err.Error(), "Script id is required") {
+		t.Errorf("expected 'Script id is required', got: %v", err)
+	}
+
+	// Too many arguments
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "update", "--store", "123", "--access-token", "token", "123", "456"})
+	if err == nil || !strings.Contains(err.Error(), "Too many arguments") {
+		t.Errorf("expected 'Too many arguments', got: %v", err)
+	}
+
+	// Non-numeric script id
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "update", "--store", "123", "--access-token", "token", "abc"})
+	if err == nil || !strings.Contains(err.Error(), "invalid: must be an int") {
+		t.Errorf("expected 'must be an int', got: %v", err)
+	}
+
+	// Invalid query format
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "update", "--store", "123", "--access-token", "token", "-q", "invalid_no_equal", "123"})
+	if err == nil || !strings.Contains(err.Error(), "key=value") {
+		t.Errorf("expected 'key=value' error, got: %v", err)
+	}
+}
+
+func TestScriptsDeleteArgsValidation(t *testing.T) {
+	app := setupTestApp()
+
+	// Missing script id
+	err := app.Run(context.Background(), []string{"tndt", "scripts", "delete", "--store", "123", "--access-token", "token"})
+	if err == nil || !strings.Contains(err.Error(), "Script id is required") {
+		t.Errorf("expected 'Script id is required', got: %v", err)
+	}
+
+	// Too many arguments
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "delete", "--store", "123", "--access-token", "token", "123", "456"})
+	if err == nil || !strings.Contains(err.Error(), "Too many arguments") {
+		t.Errorf("expected 'Too many arguments', got: %v", err)
+	}
+
+	// Non-numeric script id
+	err = app.Run(context.Background(), []string{"tndt", "scripts", "delete", "--store", "123", "--access-token", "token", "abc"})
+	if err == nil || !strings.Contains(err.Error(), "invalid: must be an int") {
+		t.Errorf("expected 'must be an int', got: %v", err)
+	}
+}
+
 func TestScriptsInvalidArg(t *testing.T) {
 	app := setupTestApp()
 	err := app.Run(context.Background(), []string{"tndt", "scripts", "ls", "--store", "12345", "--access-token", "test-token", "not-a-number"})

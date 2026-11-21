@@ -310,7 +310,40 @@ Script utilities
        tndt scripts [command [command options]]
 
     COMMANDS:
-       ls  List scripts for the given store or scripts matching the given IDs or URLs
+       create  Associate a script with the store
+       update  Update an existing script association
+       delete  Delete a script by ID
+       ls      List scripts for the given store or scripts matching the given IDs or URLs
+
+#### Creating Scripts
+
+Associate a script with a store by its ID:
+
+```
+tndt scripts create 12345
+```
+
+Pass query parameters using `-q` / `--query`:
+
+```
+tndt scripts create -q key1=val1 -q key2=val2 12345
+```
+
+#### Updating Scripts
+
+Update an existing script association by its ID:
+
+```
+tndt scripts update -q key1=val1 -q key2=val2 12345
+```
+
+#### Deleting Scripts
+
+Delete a script by its ID:
+
+```
+tndt scripts delete 12345
+```
 
 #### Listing Scripts
 
